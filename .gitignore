@@ -38,5 +38,6 @@ nosetests.xml
 PYSMELLTAGS
 .ropeproject/
 docs/_build/
-*.pyc
+docs/_static/
+docs/_templates/
 
