@@ -8,6 +8,11 @@ stepper2 = stepper.Stepper(stepper_pins2)
 
 stepper1.connect()
 stepper2.connect()
-while 1:
-    stepper1.step_forward()
-    stepper2.step_forward()
+
+stepper2.delay_multiplicator = 5
+stepper2.in_queue.put(2000)
+stepper1.in_queue.put(10000)
+stepper2.in_queue.put('stop')
+stepper1.in_queue.put('stop')
+stepper1.in_queue.join()
+stepper2.in_queue.join()

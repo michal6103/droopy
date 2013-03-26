@@ -11,7 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+.. automodule:: stepper
+    :members:
 
 Indices and tables
 ==================
