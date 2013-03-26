@@ -28,10 +28,12 @@ class Stepper(threading.Thread):
         self.start()
 
     def run(self):
+        """Function is tarted when thread is started. Getting position
+        from queue and rotating the stepper to destination"""
         while self.connected is True:
-            step = self.in_queue.get()
-            if step != 'stop':
-                self.step_to(step)
+            destination = self.in_queue.get()
+            if destination != 'stop':
+                self.step_to(destination)
                 self.in_queue.task_done()
             else:
                 self.in_queue.task_done()
