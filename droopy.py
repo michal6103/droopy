@@ -9,9 +9,9 @@ stepper2 = stepper.Stepper(stepper_pins2)
 stepper1.connect()
 stepper2.connect()
 
-stepper2.delay_multiplicator = 5
-stepper1.in_queue.put(2000)
-stepper2.in_queue.put(10000)
+stepper2.divider = 5
+stepper1.in_queue.put(5000)
+stepper2.in_queue.put(5000)
 stepper1.in_queue.put(0)
 stepper2.in_queue.put(0)
 stepper1.in_queue.put('stop')

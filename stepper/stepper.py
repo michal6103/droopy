@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import threading
 import Queue
+import datetime
 
 
 class Stepper(threading.Thread):
@@ -15,8 +16,8 @@ class Stepper(threading.Thread):
             (0, 0, 0, 1),
             (1, 0, 0, 1))
     pins = []
-    _step_delay = 0.001
-    delay_multiplicator = 1
+    _step_delay = 0.0
+    divider = 1.0
     step = 0
     connected = False
 
@@ -39,7 +40,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins, step_delay=0.001):
+    def __init__(self, pins, step_delay=0.0015):
         """Setup of GPIO pin mode, stepper pins and step delay
 
         :param pins: List of GPIO pins to initialize
@@ -83,13 +84,23 @@ class Stepper(threading.Thread):
         self._set_step(self.step % 8)
 
     def step_to(self, destination):
+        #TODO: Implement divider
         while self.step != destination:
-            for i in range(self.delay_multiplicator):
-                if i == 0:
-                    if self.step > destination:
-                        self.step_backward()
-                    if self.step < destination:
-                        self.step_forward()
-                else:
-                    self.step_same()
-                time.sleep(self._step_delay)
+            step_start = datetime.datetime.now()
+            if self.step > destination:
+                self.step_backward()
+            if self.step < destination:
+                self.step_forward()
+            step_stop = datetime.datetime.now()
+            time.sleep(self._step_delay - (step_stop - step_start).microseconds / 1000000)
+
+
+            #for i in range(self.delay_multiplicator):
+            #    if i == 0:
+            #        if self.step > destination:
+            #            self.step_backward()
+            #        if self.step < destination:
+            #            self.step_forward()
+            #    else:
+            #        self.step_same()
+            #    time.sleep(self._step_delay)
