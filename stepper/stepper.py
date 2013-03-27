@@ -69,30 +69,24 @@ class Stepper(threading.Thread):
 
     def step_forward(self):
         """Increment step and set it to GPIO"""
-        self.step += 1
-        self._set_step(self.step % 8)
+        self.step += 1.0 / self.divider
+        self._set_step(int(self.step) % 8)
 
     def step_backward(self):
         """Decrement step and set it to GPIO"""
-        self.step -= 1
-        self._set_step(self.step % 8)
-
-    def step_same(self):
-        """Do not change step and set it on GPIO.
-        Function just for synchronisation purposes"""
-        self.step += 0
-        self._set_step(self.step % 8)
+        self.step -= 1.0 / self.divider
+        self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
-        #TODO: Implement divider
-        while self.step != destination:
+        while int(self.step) != destination:
             step_start = datetime.datetime.now()
             if self.step > destination:
                 self.step_backward()
-            if self.step < destination:
+            else:
                 self.step_forward()
             step_stop = datetime.datetime.now()
-            time.sleep(self._step_delay - (step_stop - step_start).microseconds / 1000000)
+            step_delta = step_stop - step_start
+            time.sleep(self._step_delay - step_delta.microseconds / 1000000)
 
 
             #for i in range(self.delay_multiplicator):
