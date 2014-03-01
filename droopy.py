@@ -9,11 +9,11 @@ stepper2 = stepper.Stepper(stepper_pins2)
 stepper1.connect()
 stepper2.connect()
 
-stepper2.divider = 5
-stepper1.in_queue.put(5000)
-stepper2.in_queue.put(1000)
-stepper1.in_queue.put(0)
-stepper2.in_queue.put(0)
+#stepper2.divider = 5
+stepper1.in_queue.put(-50000)
+stepper2.in_queue.put(50000)
+#stepper1.in_queue.put(0)
+#stepper2.in_queue.put(0)
 stepper1.in_queue.put('stop')
 stepper2.in_queue.put('stop')
 stepper1.in_queue.join()
