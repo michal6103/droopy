@@ -17,9 +17,20 @@ class Stepper(threading.Thread):
             (1, 0, 0, 1))
     pins = []
     _step_delay = 0.0
-    divider = 1.0
     step = 0
     connected = False
+    _step_outputs = (1, 0, 0, 0)
+
+    def get_divider(self):
+        return self._divider
+
+    def set_divider(self, value):
+        if value < 1.0:
+            raise ValueError('Divider must be at least 1.0')
+        else:
+            self._divider = value
+
+    divider = property(get_divider, set_divider)
 
     def connect(self):
         """Set GPIO pins as outputs"""
@@ -51,9 +62,10 @@ class Stepper(threading.Thread):
         GPIO.setmode(GPIO.BOARD)
         self.pins = pins
         self._step_delay = step_delay
+        self._divider = 1.0
 
     def __del__(self):
-        """Clen GPIO settings"""
+        """Clean GPIO settings"""
         GPIO.cleanup()
 
     def _set_step(self, step):
@@ -61,24 +73,26 @@ class Stepper(threading.Thread):
 
         :param step: Index of step"""
         if self.connected:
-            step_outputs = self.STEPS[step]
-            for index, pin in enumerate(self.pins):
-                GPIO.output(pin, step_outputs[index])
+            self._step_outputs = self.STEPS[step]
+            #for testing purposes
+            if self.pins:
+                for index, pin in enumerate(self.pins):
+                    GPIO.output(pin, self._step_outputs[index])
         else:
             print("Not connected to GPIO pins")
 
     def step_forward(self):
         """Increment step and set it to GPIO"""
-        self.step += 1.0 // self.divider
+        self.step += 1.0 / self.divider
         self._set_step(int(self.step) % 8)
 
     def step_backward(self):
         """Decrement step and set it to GPIO"""
-        self.step -= 1.0 // self.divider
+        self.step -= 1.0 / self.divider
         self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
-        while int(self.step) != destination:
+        while int(self.step) != int(destination):
             step_start = datetime.datetime.now()
             if self.step > destination:
                 self.step_backward()
@@ -87,14 +101,3 @@ class Stepper(threading.Thread):
             step_stop = datetime.datetime.now()
             step_delta = step_stop - step_start
             time.sleep(self._step_delay - step_delta.microseconds // 1000000)
-
-
-            #for i in range(self.delay_multiplicator):
-            #    if i == 0:
-            #        if self.step > destination:
-            #            self.step_backward()
-            #        if self.step < destination:
-            #            self.step_forward()
-            #    else:
-            #        self.step_same()
-            #    time.sleep(self._step_delay)
