@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import RPi.GPIO as GPIO
 import time
 import threading
@@ -101,3 +102,25 @@ class Stepper(threading.Thread):
             step_stop = datetime.datetime.now()
             step_delta = step_stop - step_start
             time.sleep(self._step_delay - step_delta.microseconds // 1000000)
+
+
+if __name__ == "__main__":
+    stepper_pins1 = (7, 11, 12, 13)
+    stepper_pins2 = (15, 16, 18, 22)
+
+    stepper1 = Stepper(stepper_pins1)
+    stepper2 = Stepper(stepper_pins2)
+
+    stepper1.connect()
+    stepper2.connect()
+
+    stepper1.divider = 2.5
+    stepper2.divider = 2.5
+    stepper1.in_queue.put(-1000)
+    stepper2.in_queue.put(1000)
+    stepper1.in_queue.put(0)
+    stepper2.in_queue.put(0)
+    stepper1.in_queue.put('stop')
+    stepper2.in_queue.put('stop')
+    stepper1.in_queue.join()
+    stepper2.in_queue.join()
