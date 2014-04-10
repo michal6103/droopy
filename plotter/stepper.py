@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
-import RPi.GPIO as GPIO
 import time
 import threading
 import queue
 import datetime
+
+
+"""Optional load of GPIO"""
+try:
+    import RPi.GPIO as GPIO
+except ImportError as e:
+        if str(e) != "No module named 'RPi'":
+            raise
+        else:
+            GPIO = None
 
 
 class Stepper(threading.Thread):
@@ -35,8 +44,9 @@ class Stepper(threading.Thread):
 
     def connect(self):
         """Set GPIO pins as outputs"""
-        for pin in self.pins:
-            GPIO.setup(pin, GPIO.OUT)
+        if not self.debug and GPIO:
+            for pin in self.pins:
+                GPIO.setup(pin, GPIO.OUT)
         self.connected = True
         self.start()
 
@@ -52,7 +62,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins, step_delay=0.0015):
+    def __init__(self, pins, step_delay=0.0015, debug=False):
         """Setup of GPIO pin mode, stepper pins and step delay
 
         :param pins: List of GPIO pins to initialize
@@ -60,14 +70,17 @@ class Stepper(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True
         self.in_queue = queue.Queue()
-        GPIO.setmode(GPIO.BOARD)
+        self.debug = debug
+        if GPIO and not self.debug:
+            GPIO.setmode(GPIO.BOARD)
         self.pins = pins
         self._step_delay = step_delay
         self._divider = 1.0
 
     def __del__(self):
         """Clean GPIO settings"""
-        GPIO.cleanup()
+        if GPIO:
+            GPIO.cleanup()
 
     def _set_step(self, step):
         """Set GPIO outputs for certain step
