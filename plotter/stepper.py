@@ -12,7 +12,7 @@ except ImportError as e:
         if str(e) != "No module named 'RPi'":
             raise
         else:
-            GPIO = None
+            GPIO = False
 
 
 class Stepper(threading.Thread):
