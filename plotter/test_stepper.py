@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import stepper
 import unittest
 
@@ -65,6 +66,8 @@ class TestStepper(unittest.TestCase):
             self.stepper.divider = 0.33
         with self.assertRaises(ValueError):
             self.stepper.divider = -5.0
+        with self.assertRaises(ValueError):
+            self.stepper.divider = 0.0
 
     def test_step_divider_2(self):
         self.stepper.step_to(0.0)
