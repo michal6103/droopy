@@ -62,7 +62,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins, step_delay=0.0015, debug=False):
+    def __init__(self, pins=(7,11,12,3), step_delay=0.0015, debug=False):
         """Setup of GPIO pin mode, stepper pins and step delay
 
         :param pins: List of GPIO pins to initialize
@@ -71,9 +71,12 @@ class Stepper(threading.Thread):
         self.daemon = True
         self.in_queue = queue.Queue()
         self.debug = debug
-        if GPIO and not self.debug:
-            GPIO.setmode(GPIO.BOARD)
-        self.pins = pins
+        if self.debug:
+            self.pins = False
+        else:
+            if GPIO:
+                GPIO.setmode(GPIO.BOARD)
+            self.pins = pins
         self._step_delay = step_delay
         self._divider = 1.0
 
@@ -114,7 +117,8 @@ class Stepper(threading.Thread):
                 self.step_forward()
             step_stop = datetime.datetime.now()
             step_delta = step_stop - step_start
-            time.sleep(self._step_delay - step_delta.microseconds // 1000000)
+            if not self.debug:
+                time.sleep(self._step_delay - step_delta.microseconds // 1000000)
 
 
 if __name__ == "__main__":
