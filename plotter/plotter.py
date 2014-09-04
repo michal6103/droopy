@@ -8,29 +8,33 @@ class Plotter:
     stepper2_pins = (7, 11, 12, 13)
     stepper1 = None
     stepper2 = None
-    steps_pre_cm = 450
+    steps_per_cm = 450
     #l is plotter width from edge of one servo to other in centimeters
     l = 52
 
-    def __init__(self, x=0.0, y=0.0, l=52.0):
+    def __init__(self, x=0.0, y=0.0, l=52.0, debug=False):
         #Initiation of physical parameters
         self.l = l
+        if debug:
+            self.stepper1 = stepper.Stepper(debug = debug)
+            self.stepper2 = stepper.Stepper(debug = debug)
+        else:
+            self.stepper1 = stepper.Stepper(self.stepper1_pins)
+            self.stepper2 = stepper.Stepper(self.stepper2_pins)
 
-        self.stepper1 = stepper.Stepper(self.stepper1_pins)
-        self.stepper2 = stepper.Stepper(self.stepper2_pins)
-
-        self.stepper1.step = int(sqrt(x ** 2 + y ** 2) * self.steps_pre_cm)
+        self.stepper1.step = int(sqrt(x ** 2 + y ** 2) * self.steps_per_cm)
         print("Step1: {}".format(self.stepper1.step))
-        self.stepper2.step = int(sqrt(x ** 2 + (self.l - y) ** 2) * self.steps_pre_cm)
+        self.stepper2.step = int(sqrt(y ** 2 + (self.l - x) ** 2) * self.steps_per_cm)
         print("Step2: {}".format(self.stepper2.step))
 
         self.stepper1.connect()
         self.stepper2.connect()
 
     def gotoXY(self, x, y):
-        a = sqrt(x ** 2 + y ** 2) * self.steps_pre_cm
+        print("New XY: {},{}".format(x, y))
+        a = sqrt(x ** 2 + y ** 2) * self.steps_per_cm
         d_a = a - self.stepper1.step
-        b = sqrt(x ** 2 + (self.l - y) ** 2) * self.steps_pre_cm
+        b = sqrt(y ** 2 + (self.l - x) ** 2) * self.steps_per_cm
         d_b = b - self.stepper2.step
 
         #speed reduction of shorter position change
@@ -40,8 +44,8 @@ class Plotter:
         else:
             self.stepper1.divider = 1.0
             self.stepper2.divider = abs(d_b / d_a)
-        print("New position: {},{}".format(a, b))
-        print("Delta position: {},{}".format(d_a, d_b))
+        print("New ab: {},{}".format(a, b))
+        print("Delta ab: {},{}".format(d_a, d_b))
         print("Dividers: {},{}".format(
             self.stepper1.divider,
             self.stepper2.divider))
@@ -51,6 +55,18 @@ class Plotter:
         self.stepper2.in_queue.put(int(b))
         self.stepper1.in_queue.join()
         self.stepper2.in_queue.join()
+
+    def getXY(self):
+        a = self.stepper1.step
+        b = self.stepper2.step
+        a_cm = a / self.steps_per_cm
+        b_cm = b / self.steps_per_cm
+        print("Actual ab: {},{}".format(a, b))
+        l = self.l
+        x = (a_cm ** 2 - b_cm ** 2 + l ** 2) / (2 * l)
+        y = 0
+        #y = self.steps_per_cm * sqrt(a ** 2 - a ** 2 * ((a ** 2 + l ** 2 - b ** 2) / (2 * l * a)) ** 2)
+        return (x,y)
 
     def __del__(self):
         self.stepper1.in_queue.put('stop')
@@ -65,3 +81,4 @@ if __name__ == "__main__":
     plotter.gotoXY(28.0, 48.0)
     plotter.gotoXY(27.0, 48.0)
     plotter.gotoXY(27.0, 47.0)
+
