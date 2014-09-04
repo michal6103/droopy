@@ -7,7 +7,7 @@ class TestStepper(unittest.TestCase):
 
     def setUp(self):
         self.stepper_pins = False
-        self.stepper = stepper.Stepper(self.stepper_pins)
+        self.stepper = stepper.Stepper(self.stepper_pins, debug=True)
         self.stepper.connected = True
 
     def test_steps_forward(self):
@@ -60,6 +60,8 @@ class TestStepper(unittest.TestCase):
         self.assertEqual(self.stepper.step, -100)
         self.stepper.step_to(0)
         self.assertEqual(self.stepper.step, 0)
+        self.stepper.step_to(23400.0)
+        self.assertEqual(self.stepper.step, 23400)
 
     def test_step_divider_range(self):
         with self.assertRaises(ValueError):
