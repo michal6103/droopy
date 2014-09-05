@@ -87,5 +87,12 @@ class TestStepper(unittest.TestCase):
         self.stepper.step_backward()
         self.assertEqual(self.stepper.step, -1.0)
 
+    def test_stepper_non_divisible_destination_by_divider(self):
+        self.stepper.step_to(0.0)
+        self.stepper.divider = 7
+        self.stepper.step_to(1.0)
+        self.assertEqual(self.stepper.step, 1.0)
+
+
 if __name__ == '__main__':
     unittest.main()
