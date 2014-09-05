@@ -3,6 +3,7 @@ import time
 import threading
 import queue
 import datetime
+from math import floor
 
 
 """Optional load of GPIO"""
@@ -62,7 +63,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins=(7,11,12,3), step_delay=0.0015, debug=False):
+    def __init__(self, pins=(7, 11, 12, 3), step_delay=0.0015, debug=False):
         """Setup of GPIO pin mode, stepper pins and step delay
 
         :param pins: List of GPIO pins to initialize
@@ -119,6 +120,8 @@ class Stepper(threading.Thread):
             step_delta = step_stop - step_start
             if not self.debug:
                 time.sleep(self._step_delay - step_delta.microseconds // 1000000)
+        #Reset decimal error caused by divission
+        self.step = floor(self.step)
 
 
 if __name__ == "__main__":
