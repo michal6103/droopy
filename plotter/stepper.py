@@ -4,13 +4,16 @@ import threading
 import queue
 import datetime
 from math import floor
+import logging
 
+logger = logging.getLogger(__name__)
 
 """Optional load of GPIO"""
 try:
     import RPi.GPIO as GPIO
 except ImportError as e:
         if str(e) != "No module named 'RPi'":
+            logger.info('Cannot load module RPi')
             raise
         else:
             GPIO = False
@@ -78,6 +81,7 @@ class Stepper(threading.Thread):
             if GPIO:
                 GPIO.setmode(GPIO.BOARD)
             self.pins = pins
+        logger.debug('GPIO pins: %s', self.pins)
         self._step_delay = step_delay
         self._divider = 1.0
 
@@ -95,9 +99,10 @@ class Stepper(threading.Thread):
             #for testing purposes
             if self.pins:
                 for index, pin in enumerate(self.pins):
+                    logger.debug('Step: %s\t%s', self.step, self._step_outputs[index])
                     GPIO.output(pin, self._step_outputs[index])
         else:
-            print("Not connected to GPIO pins")
+            logger.info("Not connected to GPIO pins")
 
     def step_forward(self):
         """Increment step and set it to GPIO"""
