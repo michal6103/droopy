@@ -7,6 +7,8 @@ from math import floor
 import logging
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 
 """Optional load of GPIO"""
 try:
@@ -99,7 +101,7 @@ class Stepper(threading.Thread):
             #for testing purposes
             if self.pins:
                 for index, pin in enumerate(self.pins):
-                    logger.debug('Step: %s\t%s', self.step, self._step_outputs[index])
+                    logger.debug('Step: %s\tDivider: %s', self.step, self.divider)
                     GPIO.output(pin, self._step_outputs[index])
         else:
             logger.info("Not connected to GPIO pins")
@@ -115,6 +117,7 @@ class Stepper(threading.Thread):
         self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
+        logger.info("Stepping %s to %s with divider %s", self.step, destination, self.divider)
         while int(self.step) != int(destination):
             step_start = datetime.datetime.now()
             if self.step > destination:
