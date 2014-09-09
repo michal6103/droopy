@@ -3,7 +3,7 @@ import plotter
 import unittest
 
 
-class TestStepper(unittest.TestCase):
+class TestPlotter(unittest.TestCase):
 
     def setUp(self):
         self.plotter = plotter.Plotter(debug=True)
@@ -19,6 +19,14 @@ class TestStepper(unittest.TestCase):
         self.plotter.gotoXY(x, y)
         self.assertTrue(abs(self.plotter.getX() - x) < self.tolerance)
         self.assertTrue(abs(self.plotter.getY() - y) < self.tolerance)
+
+    def test_vertical_line(self):
+        x = self.plotter.l // 2
+        y = 0
+        self.plotter.gotoXY(x, y)
+        x = self.plotter.l // 2
+        y = self.plotter.l
+        self.plotter.gotoXY(x, y)
 
     def test_every_cm_in_lxl(self):
         l = int(self.plotter.l)
