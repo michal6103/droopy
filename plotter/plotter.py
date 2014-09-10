@@ -13,6 +13,14 @@ class Plotter:
     l = 52
 
     def __init__(self, x=0.0, y=0.0, l=52.0, debug=False):
+        """Initialisation of plotter with physical parameters
+
+        :param x: Initial X position of the pen in centimeters.
+            Positive number from distance from left stepper to the pen tip.
+        :param y: Initial Y position of the pen in centimeters.
+            Positive number measuring distance from top of steppers to the pen tip
+        :param l: Width of plotter measured from middle of one stepper to middle of second stepper.
+        :param debug: Debug mode disables physical GPIO outputs. Useful for debugging and testing"""
         #Initiation of physical parameters
         self.l = l
         if debug:
@@ -25,7 +33,8 @@ class Plotter:
         a_cm = sqrt(x**2 + y**2)
         a = int(a_cm * self.steps_per_cm)
         b_cm = sqrt((l-x)**2 + y**2)
-        b = int(b_cm * self.steps_per_cm)
+        #b must be negative so the right stepper is rotating in reverse
+        b = -int(b_cm * self.steps_per_cm)
 
         self.stepper1.step = a
         self.stepper2.step = b
@@ -34,6 +43,11 @@ class Plotter:
         self.stepper2.connect()
 
     def gotoXY(self, x, y):
+        """Move pen to position X,Y
+
+        :param x: Horizontal destination. Positive number from distance from left stepper to the pen tip.
+        :param y: Vertical destination. Positive number measuring distance from top of steppers to the pen tip
+        """
         #print("New XY: {},{}".format(x, y))
         l = self.l
 
@@ -42,7 +56,8 @@ class Plotter:
         d_a = a - self.stepper1.step
 
         b_cm = sqrt((l - x)**2 + y**2)
-        b = int(b_cm * self.steps_per_cm)
+        #b must be negative so the right stepper is rotating in reverse
+        b = -int(b_cm * self.steps_per_cm)
         d_b = b - self.stepper2.step
 
         print("New ab: {},{}".format(a, b))
@@ -70,9 +85,17 @@ class Plotter:
         self.stepper2.in_queue.join()
 
     def getXY(self):
+        """ Function takes actual step positions of steppers and return orthogonal coordinates of the pen in centimeters.
+
+        :return: Tuple with XY coordinates of the pen
+        """
         return (self.getX(), self.getY())
 
     def getX(self):
+        """ Function takes actual step positions of steppers and returns horizontal coordinate of the pen centimeters.
+
+        :return: Horizontal coordinate of the pen
+        """
         a = self.stepper1.step
         b = self.stepper2.step
         a_cm = a / self.steps_per_cm
@@ -82,6 +105,10 @@ class Plotter:
         return x
 
     def getY(self):
+        """ Function takes actual step positions of steppers and returns vertical coordinate of the pen in centimeters.
+
+        :return: Vertical coordinate of the pen
+        """
         a = self.stepper1.step
         b = self.stepper2.step
         a_cm = a / self.steps_per_cm
@@ -91,6 +118,8 @@ class Plotter:
         return y
 
     def __del__(self):
+        """ Stop the stepper threads on destruction
+        """
         self.stepper1.in_queue.put('stop')
         self.stepper2.in_queue.put('stop')
         self.stepper1.in_queue.join()

@@ -69,10 +69,11 @@ class Stepper(threading.Thread):
                 self.connected = False
 
     def __init__(self, pins=(7, 11, 12, 3), step_delay=0.0015, debug=False):
-        """Setup of GPIO pin mode, stepper pins and step delay
+        """Setup of GPIO pin mode, stepper pins, step delay and debug mode
 
         :param pins: List of GPIO pins to initialize
-        :param step_delay: Minimal delay between steps"""
+        :param step_delay: Minimal delay between steps
+        :param debug: Debug set to True disable physical GPIO setup, used for testing and debugging"""
         threading.Thread.__init__(self)
         self.daemon = True
         self.in_queue = queue.Queue()
@@ -117,6 +118,9 @@ class Stepper(threading.Thread):
         self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
+        """Rotate stepper till self.step is equal to destination
+
+        :param destination: Absolute value of steps when to end rotation"""
         logger.info("Stepping %s to %s with divider %s", self.step, destination, self.divider)
         while int(self.step) != int(destination):
             step_start = datetime.datetime.now()
@@ -128,7 +132,7 @@ class Stepper(threading.Thread):
             step_delta = step_stop - step_start
             if not self.debug:
                 time.sleep(self._step_delay - step_delta.microseconds // 1000000)
-        #Reset decimal error caused by divission
+        #Reset decimal error caused by division
         self.step = floor(self.step)
 
 
