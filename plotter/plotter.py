@@ -62,22 +62,18 @@ class Plotter:
 
         print("New ab: {},{}".format(a, b))
         print("Delta ab: {},{}".format(d_a, d_b))
+
+        #speed reduction of shorter position change
+        if abs(d_a) > abs(d_b):
+            self.stepper1.divider = 1.0
+            self.stepper2.divider = abs(d_a / d_b)
+        else:
+            self.stepper1.divider = abs(d_b / d_a)
+            self.stepper2.divider = 1.0
+
         print("Dividers: {},{}".format(
             self.stepper1.divider,
             self.stepper2.divider))
-
-        #speed reduction of shorter position change
-        if abs(d_a) == abs(d_b):
-            self.stepper1.divider = 1.0
-            self.stepper2.divider = 1.0
-        else:
-            if abs(d_a) > abs(d_b):
-                self.stepper1.divider = 1.0
-                self.stepper2.divider = abs(d_a / d_b)
-            else:
-                self.stepper1.divider = abs(d_b / d_a)
-                self.stepper2.divider = 1.0
-
         #synchronized movement of pen to new position
         self.stepper1.in_queue.put(int(a))
         self.stepper2.in_queue.put(int(b))
@@ -134,7 +130,7 @@ if __name__ == "__main__":
         #plotter.gotoXY(34.0, 54.0)
         #plotter.gotoXY(20.0, 54.0)
         #plotter.gotoXY(20.0, 40.0)
-        for i in range(100):
+        for i in range(5):
             plotter.gotoXY(32, 41.5)
             plotter.gotoXY(33, 40.25)
             plotter.gotoXY(34, 40)
