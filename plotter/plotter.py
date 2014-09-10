@@ -66,9 +66,15 @@ class Plotter:
         #speed reduction of shorter position change
         if abs(d_a) > abs(d_b):
             self.stepper1.divider = 1.0
-            self.stepper2.divider = abs(d_a / d_b)
+            try:
+                self.stepper2.divider = abs(d_a / d_b)
+            except ZeroDivisionError:
+                self.stepper2.divider = float("inf")
         else:
-            self.stepper1.divider = abs(d_b / d_a)
+            try:
+                self.stepper1.divider = abs(d_b / d_a)
+            except:
+                self.stepper1.divider = float("inf")
             self.stepper2.divider = 1.0
 
         print("Dividers: {},{}".format(
