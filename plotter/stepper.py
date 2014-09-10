@@ -146,10 +146,10 @@ if __name__ == "__main__":
     stepper1.connect()
     stepper2.connect()
 
-    stepper1.divider = 2.5
-    stepper2.divider = 2.5
-    stepper1.in_queue.put(-1000)
-    stepper2.in_queue.put(1000)
+    stepper1.divider = 1.0
+    stepper2.divider = 1.0
+    stepper1.in_queue.put(1000)
+    stepper2.in_queue.put(-1000)
     stepper1.in_queue.put(0)
     stepper2.in_queue.put(0)
     stepper1.in_queue.put('stop')
