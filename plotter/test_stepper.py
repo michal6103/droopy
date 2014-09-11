@@ -91,16 +91,9 @@ class TestStepper(unittest.TestCase):
         self.stepper.step_to(0.0)
         self.stepper.divider = 7
         self.stepper.step_to(1.0)
-<<<<<<< HEAD
         self.assertEqual(self.stepper.step, 1.0)
         self.stepper.step_to(-1.0)
         self.assertEqual(self.stepper.step, -1.0)
-=======
-        self.assertEqual(self.stepper.step, 1)
-        self.stepper.step_to(-1.0)
-        self.assertEqual(self.stepper.step, -1)
->>>>>>> e618e9c82370add8e628bdd9d5ddce413e783db4
-
 
 if __name__ == '__main__':
     unittest.main()

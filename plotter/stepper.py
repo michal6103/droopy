@@ -135,7 +135,7 @@ class Stepper(threading.Thread):
             if not self.debug:
                 time.sleep(self._step_delay - step_delta.microseconds // 1000000)
         #Reset decimal error caused by division
-        self.step = floor(self.step)
+        self.step = int(self.step)
 
 
 if __name__ == "__main__":
