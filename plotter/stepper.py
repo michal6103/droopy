@@ -7,7 +7,7 @@ from math import floor
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 """Optional load of GPIO"""
@@ -110,18 +110,20 @@ class Stepper(threading.Thread):
     def step_forward(self):
         """Increment step and set it to GPIO"""
         self.step += 1.0 / self.divider
+        logger.debug('Step: +%s = %s', 1.0 / self.divider, self.step)
         self._set_step(int(self.step) % 8)
 
     def step_backward(self):
         """Decrement step and set it to GPIO"""
         self.step -= 1.0 / self.divider
+        logger.debug('Step: +%s = %s', 1.0 / self.divider, self.step)
         self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
         """Rotate stepper till self.step is equal to destination
 
         :param destination: Absolute value of steps when to end rotation"""
-        logger.info("Stepping %s to %s with divider %s", self.step, destination, self.divider)
+        logger.info("Stepping from %s to %s with divider %s", self.step, destination, self.divider)
         while int(self.step) != int(destination):
             step_start = datetime.datetime.now()
             if self.step > destination:
