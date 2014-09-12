@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import stepper
 from math import sqrt
+import urllib
+import json
 
 
 class Plotter:
@@ -129,35 +131,20 @@ class Plotter:
 
 
 if __name__ == "__main__":
+    url = 'http://192.168.0.103:5000/json'
+    response = urllib.request.urlopen(url)
+    str_response = response.readall().decode('utf-8')
+    image = json.loads(str_response)
+
     try:
-        plotter = Plotter(x=32.0, y=41.5, l=54.0)
+        plotter = Plotter(x=14.0, y=30.0, l=54.0)
+        for x,y in image[analog_data]:
+            plotter.gotoXY(x, y)
         #plotter.gotoXY(20.0, 40.0)
         #plotter.gotoXY(34.0, 40.0)
         #plotter.gotoXY(34.0, 54.0)
         #plotter.gotoXY(20.0, 54.0)
         #plotter.gotoXY(20.0, 40.0)
-        for i in range(5):
-            plotter.gotoXY(32, 41.5)
-            plotter.gotoXY(33, 40.25)
-            plotter.gotoXY(34, 40)
-            plotter.gotoXY(35, 40.25)
-            plotter.gotoXY(36, 40.8)
-            plotter.gotoXY(36.5, 42.5)
-            plotter.gotoXY(36, 44)
-            plotter.gotoXY(35, 46)
-            plotter.gotoXY(34, 47)
-            plotter.gotoXY(33, 48.5)
-            plotter.gotoXY(32, 50)
-            plotter.gotoXY(31, 48.5)
-            plotter.gotoXY(30, 47)
-            plotter.gotoXY(29, 46)
-            plotter.gotoXY(28, 44)
-            plotter.gotoXY(27.5, 42.5)
-            plotter.gotoXY(28, 40.8)
-            plotter.gotoXY(29, 40.25)
-            plotter.gotoXY(30, 40)
-            plotter.gotoXY(31, 40.25)
-            plotter.gotoXY(32, 41.5)
 
 
 
