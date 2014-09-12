@@ -11,8 +11,15 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+.. automodule:: plotter
+    :members:
+
+.. autoclass:: Plotter
+    :members:
+
 .. automodule:: stepper
     :members:
+
 
 Indices and tables
 ==================
