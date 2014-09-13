@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import stepper
 from math import sqrt
-import urllib
+import urllib.request
 import json
 
 
@@ -62,8 +62,8 @@ class Plotter:
         b = -int(b_cm * self.steps_per_cm)
         d_b = b - self.stepper2.step
 
-        print("New ab: {},{}".format(a, b))
-        print("Delta ab: {},{}".format(d_a, d_b))
+        #print("New ab: {},{}".format(a, b))
+        #print("Delta ab: {},{}".format(d_a, d_b))
 
         #speed reduction of shorter position change
         if abs(d_a) > abs(d_b):
@@ -79,9 +79,9 @@ class Plotter:
                 self.stepper1.divider = float("inf")
             self.stepper2.divider = 1.0
 
-        print("Dividers: {},{}".format(
-            self.stepper1.divider,
-            self.stepper2.divider))
+        #print("Dividers: {},{}".format(
+        #    self.stepper1.divider,
+        #    self.stepper2.divider))
         #synchronized movement of pen to new position
         self.stepper1.in_queue.put(int(a))
         self.stepper2.in_queue.put(int(b))
@@ -137,8 +137,8 @@ if __name__ == "__main__":
     image = json.loads(str_response)
 
     try:
-        plotter = Plotter(x=14.0, y=30.0, l=54.0)
-        for x,y in image[analog_data]:
+        plotter = Plotter(x=20.0, y=33.0, l=54.0)
+        for x,y in image["analog_data"]:
             plotter.gotoXY(x, y)
         #plotter.gotoXY(20.0, 40.0)
         #plotter.gotoXY(34.0, 40.0)
