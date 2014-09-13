@@ -67,7 +67,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins=(7, 11, 12, 3), step_delay=0.0015, debug=False):
+    def __init__(self, pins=(7, 11, 12, 3), step_delay=0.002, debug=False):
         """Setup of GPIO pin mode, stepper pins, step delay and debug mode
 
         :param pins: List of GPIO pins to initialize
