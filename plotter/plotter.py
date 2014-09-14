@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import stepper
 from math import sqrt
-import urllib
+import urllib.request
 import json
 import logging
 
@@ -10,8 +10,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Plotter:
-    stepper1_pins = (7, 11, 12, 13)
-    stepper2_pins = (15, 16, 18, 22)
+    stepper1_pins = (15, 16, 18, 22)
+    stepper2_pins = (7, 11, 12, 13)
     stepper1 = None
     stepper2 = None
     steps_per_cm = 450
@@ -54,7 +54,7 @@ class Plotter:
         :param x: Horizontal destination. Positive number from distance from left stepper to the pen tip.
         :param y: Vertical destination. Positive number measuring distance from top of steppers to the pen tip
         """
-        #print("New XY: {},{}".format(x, y))
+        print("New XY: {},{}".format(x, y))
         l = self.l
 
         a_cm = sqrt(x ** 2 + y ** 2)
@@ -141,14 +141,13 @@ if __name__ == "__main__":
     image = json.loads(str_response)
 
     try:
-        plotter = Plotter(x=14.0, y=30.0, l=54.0)
-        for x, y in image[analog_data]:
+        plotter = Plotter(x=11.0, y=30.0, l=54.0)
+        for x,y in image["analog_data"]:
             plotter.gotoXY(x, y)
-        #plotter.gotoXY(20.0, 40.0)
-        #plotter.gotoXY(34.0, 40.0)
-        #plotter.gotoXY(34.0, 54.0)
-        #plotter.gotoXY(20.0, 54.0)
-        #plotter.gotoXY(20.0, 40.0)
+        #for y in range(36)[::5]:
+        #    for x in range(33):
+        #        plotter.gotoXY(11 + x, 30 + y)
+        plotter.gotoXY(11, 30)
 
 
 

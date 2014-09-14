@@ -14,9 +14,6 @@ Contents:
 .. automodule:: plotter
     :members:
 
-.. autoclass:: Plotter
-    :members:
-
 .. automodule:: stepper
     :members:
 

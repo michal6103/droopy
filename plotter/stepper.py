@@ -24,14 +24,14 @@ class Stepper(threading.Thread):
     """Class for set up of GPIO pins for use of stepper motor"""
 
     """Order of steps should turn stepper clockwise"""
-    STEPS = ((1, 0, 0, 0),
-            (1, 1, 0, 0),
-            (0, 1, 0, 0),
-            (0, 1, 1, 0),
-            (0, 0, 1, 0),
-            (0, 0, 1, 1),
+    STEPS =((1, 0, 0, 1),
             (0, 0, 0, 1),
-            (1, 0, 0, 1))
+            (0, 0, 1, 1),
+            (0, 0, 1, 0),
+            (0, 1, 1, 0),
+            (0, 1, 0, 0),
+            (1, 1, 0, 0),
+            (1, 0, 0, 0))
     pins = []
     _step_delay = 0.0
     step = 0
@@ -69,7 +69,7 @@ class Stepper(threading.Thread):
                 self.in_queue.task_done()
                 self.connected = False
 
-    def __init__(self, pins=(7, 11, 12, 3), step_delay=0.0015, debug=False):
+    def __init__(self, pins=(7, 11, 12, 3), step_delay=0.002, debug=False):
         """Setup of GPIO pin mode, stepper pins, step delay and debug mode
 
         :param pins: List of GPIO pins to initialize
@@ -140,8 +140,8 @@ class Stepper(threading.Thread):
 
 
 if __name__ == "__main__":
-    stepper_pins1 = (7, 11, 12, 13)
-    stepper_pins2 = (15, 16, 18, 22)
+    stepper_pins1 = (15, 16, 18, 22)
+    stepper_pins2 = (7, 11, 12, 13)
 
     stepper1 = Stepper(stepper_pins1)
     stepper2 = Stepper(stepper_pins2)
