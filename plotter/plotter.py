@@ -3,6 +3,10 @@ import stepper
 from math import sqrt
 import urllib
 import json
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class Plotter:
@@ -53,11 +57,11 @@ class Plotter:
         #print("New XY: {},{}".format(x, y))
         l = self.l
 
-        a_cm = sqrt(x**2 + y**2)
+        a_cm = sqrt(x ** 2 + y ** 2)
         a = int(a_cm * self.steps_per_cm)
         d_a = a - self.stepper1.step
 
-        b_cm = sqrt((l - x)**2 + y**2)
+        b_cm = sqrt((l - x) ** 2 + y ** 2)
         #b must be negative so the right stepper is rotating in reverse
         b = -int(b_cm * self.steps_per_cm)
         d_b = b - self.stepper2.step
@@ -105,7 +109,7 @@ class Plotter:
         a_cm = a / self.steps_per_cm
         b_cm = b / self.steps_per_cm
         l = self.l
-        x = (a_cm**2 - b_cm**2 + l**2) / (2 * l)
+        x = (a_cm ** 2 - b_cm ** 2 + l ** 2) / (2 * l)
         return x
 
     def getY(self):
@@ -118,7 +122,7 @@ class Plotter:
         a_cm = a / self.steps_per_cm
         b_cm = b / self.steps_per_cm
         l = self.l
-        y = sqrt(a_cm**2 - (a_cm**2 - b_cm**2 + l**2)**2/(4 * l**2))
+        y = sqrt(a_cm ** 2 - (a_cm ** 2 - b_cm ** 2 + l ** 2) ** 2 / (4 * l ** 2))
         return y
 
     def __del__(self):
@@ -138,7 +142,7 @@ if __name__ == "__main__":
 
     try:
         plotter = Plotter(x=14.0, y=30.0, l=54.0)
-        for x,y in image[analog_data]:
+        for x, y in image[analog_data]:
             plotter.gotoXY(x, y)
         #plotter.gotoXY(20.0, 40.0)
         #plotter.gotoXY(34.0, 40.0)
