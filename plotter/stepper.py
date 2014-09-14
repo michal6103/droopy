@@ -22,14 +22,14 @@ except ImportError as e:
 
 class Stepper(threading.Thread):
     """Class for set up of GPIO pins for use of stepper motor"""
-    STEPS = ((1, 0, 0, 0),
-            (1, 1, 0, 0),
-            (0, 1, 0, 0),
-            (0, 1, 1, 0),
-            (0, 0, 1, 0),
-            (0, 0, 1, 1),
+    STEPS =((1, 0, 0, 1),
             (0, 0, 0, 1),
-            (1, 0, 0, 1))
+            (0, 0, 1, 1),
+            (0, 0, 1, 0),
+            (0, 1, 1, 0),
+            (0, 1, 0, 0),
+            (1, 1, 0, 0),
+            (1, 0, 0, 0))
     pins = []
     _step_delay = 0.0
     step = 0
@@ -138,8 +138,8 @@ class Stepper(threading.Thread):
 
 
 if __name__ == "__main__":
-    stepper_pins1 = (7, 11, 12, 13)
-    stepper_pins2 = (15, 16, 18, 22)
+    stepper_pins1 = (15, 16, 18, 22)
+    stepper_pins2 = (7, 11, 12, 13)
 
     stepper1 = Stepper(stepper_pins1)
     stepper2 = Stepper(stepper_pins2)
