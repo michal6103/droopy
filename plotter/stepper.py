@@ -22,6 +22,8 @@ except ImportError as e:
 
 class Stepper(threading.Thread):
     """Class for set up of GPIO pins for use of stepper motor"""
+
+    """Order of steps should turn stepper clockwise"""
     STEPS = ((1, 0, 0, 0),
             (1, 1, 0, 0),
             (0, 1, 0, 0),
