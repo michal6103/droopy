@@ -38,6 +38,8 @@ class TestPlotter(unittest.TestCase):
         y = 10
         self.plotter.gotoXY(x, y)
         self.plotter.gotoXY(x, y)
+        self.assertTrue(abs(self.plotter.getX() - x) < self.tolerance)
+        self.assertTrue(abs(self.plotter.getY() - y) < self.tolerance)
 
     def test_every_cm_in_lxl(self):
         l = int(self.plotter.l)
