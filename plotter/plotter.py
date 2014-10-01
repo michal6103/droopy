@@ -135,7 +135,8 @@ class Plotter:
 
 
 if __name__ == "__main__":
-    url = 'http://192.168.0.103:5000/json'
+    #url = 'http://192.168.0.103:5000/json'
+    url = 'http://web-droopy.rhcloud.com/json'
     response = urllib.request.urlopen(url)
     str_response = response.readall().decode('utf-8')
     image = json.loads(str_response)
@@ -147,6 +148,7 @@ if __name__ == "__main__":
         #for y in range(36)[::5]:
         #    for x in range(33):
         #        plotter.gotoXY(11 + x, 30 + y)
+        plotter.gotoXY(11, 75)
         plotter.gotoXY(11, 30)
 
 
