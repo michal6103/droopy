@@ -47,6 +47,7 @@ class Stepper(threading.Thread):
         else:
             self._divider = value
 
+    #Divider property setter and getter
     divider = property(get_divider, set_divider)
 
     def connect(self):
