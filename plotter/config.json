@@ -1,0 +1,15 @@
+{
+    "plotter": {
+        "logging_level": "Debug",
+        "steps_per_cm": 450,
+        "width": 52
+    },
+
+    "stepper1": {
+        "pins": [15, 16, 18, 22]
+    },
+
+    "stepper2": {
+        "pins": [7, 11, 12, 13]
+    }
+}
