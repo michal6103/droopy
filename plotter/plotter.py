@@ -84,7 +84,7 @@ class Plotter:
         :param x: Horizontal destination. Positive number from distance from left stepper to the pen tip.
         :param y: Vertical destination. Positive number measuring distance from top of steppers to the pen tip
         """
-        print("New XY: {},{}".format(x, y))
+        logger.info("New XY: {},{}".format(x, y))
         l = self.l
 
         a_cm = sqrt(x ** 2 + y ** 2)
@@ -96,8 +96,8 @@ class Plotter:
         b = -int(b_cm * self.steps_per_cm)
         d_b = b - self.stepper2.step
 
-        print("New ab: {},{}".format(a, b))
-        print("Delta ab: {},{}".format(d_a, d_b))
+        logger.debug("New ab: {},{}".format(a, b))
+        logger.debug("Delta ab: {},{}".format(d_a, d_b))
 
         #speed reduction of shorter position change
         if abs(d_a) > abs(d_b):
@@ -113,7 +113,7 @@ class Plotter:
                 self.stepper1.divider = float("inf")
             self.stepper2.divider = 1.0
 
-        print("Dividers: {},{}".format(
+        logger.debug("Dividers: {},{}".format(
             self.stepper1.divider,
             self.stepper2.divider))
         #synchronized movement of pen to new position
