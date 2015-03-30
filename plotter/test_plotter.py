@@ -6,6 +6,7 @@ import unittest
 class TestPlotter(unittest.TestCase):
 
     def setUp(self):
+        #Debug must be true so plotter will not send  steps over GPIO
         self.plotter = plotter.Plotter(debug=True)
         self.tolerance = self.plotter.steps_per_cm
 

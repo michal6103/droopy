@@ -5,18 +5,48 @@ import urllib.request
 import json
 import logging
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
+logger = logging.getLogger(__name__)
+
+def load_config():
+    #Get configuration from config file
+    config = None
+    try:
+        config_file = open('config.json') 
+        config = json.load(config_file)
+        logger.debug('Parsed config file: ', config)
+    except IOError: 
+        logger.info("Parsing the JSON config file: %s", config_file.name)
+    except ValueError:
+        logger.error("Parsing of JSON config failed")
+    else:
+        validate_config(config)
+    return config
+
+def validate_config(config):
+    #Validate the required config params
+    try:
+        config['plotter']["logging_level"]
+        config['plotter']["steps_per_cm"]
+        config['plotter']["width"]
+        config['stepper1']['pins']
+        config['stepper2']['pins']
+    except KeyError as key:
+        logger.error("Missing %s setting in config", key)
+        raise
+
+CONFIG = load_config()
+
+logging.basicConfig(level=CONFIG['plotter']['logging_level'])
 
 class Plotter:
-    stepper1_pins = (15, 16, 18, 22)
-    stepper2_pins = (7, 11, 12, 13)
+    stepper1_pins = CONFIG['stepper1']['pins']
+    stepper2_pins = CONFIG['stepper2']['pins'] 
     stepper1 = None
     stepper2 = None
-    steps_per_cm = 450
+    steps_per_cm = CONFIG['plotter']['steps_per_cm']
     #l is plotter width from edge of one servo to other in centimeters
-    l = 52
+    l = CONFIG['plotter']['width']
 
     def __init__(self, x=0.0, y=0.0, l=52.0, debug=False):
         """Initialisation of plotter with physical parameters
@@ -142,7 +172,7 @@ if __name__ == "__main__":
     image = json.loads(str_response)
 
     try:
-        plotter = Plotter(x=11.0, y=30.0, l=54.0)
+        plotter = Plotter(x=11.0, y=30.0, l=54.0, debug=False)
         for x,y in image["analog_data"]:
             plotter.gotoXY(x, y)
         #for y in range(36)[::5]:
