@@ -4,15 +4,18 @@ from math import sqrt
 import urllib.request
 import json
 import logging
+import os
 
 
 logger = logging.getLogger(__name__)
 
 def load_config():
-    #Get configuration from config file
+    """Method load configuration from configuration file
+    """
     config = None
     try:
-        config_file = open('config.json') 
+        config_file_path = os.path.join(os.path.dirname(__file__),'config.json')
+        config_file = open(config_file_path)
         config = json.load(config_file)
         logger.debug('Parsed config file: ', config)
     except IOError: 
@@ -24,7 +27,10 @@ def load_config():
     return config
 
 def validate_config(config):
-    #Validate the required config params
+    """Method check if the required config params are present
+
+    :param config:dicctionary containing configuration
+    """
     try:
         config['plotter']["logging_level"]
         config['plotter']["steps_per_cm"]
@@ -40,6 +46,8 @@ CONFIG = load_config()
 logging.basicConfig(level=CONFIG['plotter']['logging_level'])
 
 class Plotter:
+    """Class controlling the plotter
+    """
     stepper1_pins = CONFIG['stepper1']['pins']
     stepper2_pins = CONFIG['stepper2']['pins'] 
     stepper1 = None
