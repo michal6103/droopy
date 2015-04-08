@@ -17,6 +17,8 @@ Contents:
 .. automodule:: stepper
     :members:
 
+.. automodule:: DummyGPIO
+    :members:
 
 Indices and tables
 ==================
