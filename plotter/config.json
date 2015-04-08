@@ -1,6 +1,7 @@
 {
     "plotter": {
-        "logging_level": "Debug",
+        "__logging_levels_comment" : "CRITICAL 50, ERROR 40, WARNING 30, INFO 20, DEBUG 10, NOTSET 0",
+        "logging_level": 20,
         "steps_per_cm": 450,
         "width": 52
     },
