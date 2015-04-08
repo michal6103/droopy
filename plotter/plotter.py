@@ -5,9 +5,11 @@ import urllib.request
 import json
 import logging
 import os
+import time
 
 
 logger = logging.getLogger(__name__)
+#logger.propagate = False
 
 def load_config():
     """Method load configuration from configuration file
@@ -41,9 +43,14 @@ def validate_config(config):
         logger.error("Missing %s setting in config", key)
         raise
 
-CONFIG = load_config()
+def setup_logger():
+    """Function set up logger. At first it delete root handlers from stepper modules to override it from configuration file
+    """
+    logging.root.handlers = []
+    logging.basicConfig(level=CONFIG['plotter']['logging_level'])
 
-logging.basicConfig(level=CONFIG['plotter']['logging_level'])
+CONFIG = load_config()
+setup_logger()
 
 class Plotter:
     """Class controlling the plotter
@@ -163,14 +170,20 @@ class Plotter:
         y = sqrt(a_cm ** 2 - (a_cm ** 2 - b_cm ** 2 + l ** 2) ** 2 / (4 * l ** 2))
         return y
 
-    def __del__(self):
+    def stop(self):
         """ Stop the stepper threads on destruction
-        """
+        """ 
+        logger.info("Clearing queues")
+        with self.stepper1.in_queue.mutex:
+            self.stepper1.in_queue.queue.clear()
+        with self.stepper2.in_queue.mutex:
+            self.stepper2.in_queue.queue.clear()
+        logger.info("Putting Stop to both stepper queues")
         self.stepper1.in_queue.put('stop')
         self.stepper2.in_queue.put('stop')
-        self.stepper1.in_queue.join()
-        self.stepper2.in_queue.join()
-
+        while self.stepper1.is_alive() or self.stepper2.is_alive():
+            logger.info("Waiting for stepper threads to finish")
+            time.sleep(0.1)
 
 if __name__ == "__main__":
     #url = 'http://192.168.0.103:5000/json'
@@ -178,7 +191,6 @@ if __name__ == "__main__":
     response = urllib.request.urlopen(url)
     str_response = response.readall().decode('utf-8')
     image = json.loads(str_response)
-
     try:
         plotter = Plotter(x=11.0, y=30.0, l=54.0, debug=False)
         for x,y in image["analog_data"]:
@@ -188,14 +200,8 @@ if __name__ == "__main__":
         #        plotter.gotoXY(11 + x, 30 + y)
         plotter.gotoXY(11, 75)
         plotter.gotoXY(11, 30)
-
-
-
     except KeyboardInterrupt:
-        print('Quitting!')
-
+        logger.info("CTRL+C: Quitting")
     finally:
-        plotter.stepper1.in_queue.put('stop')
-        plotter.stepper2.in_queue.put('stop')
-        plotter.stepper1.in_queue.join()
-        plotter.stepper2.in_queue.join()
+        plotter.stop()
+    logger.info("Done")
