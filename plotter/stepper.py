@@ -17,7 +17,8 @@ except ImportError as e:
             logger.info('Cannot load module RPi')
             raise
         else:
-            GPIO = False
+            from DummyGPIO import DummyGPIO as GPIO
+            #GPIO = False
 
 
 class Stepper(threading.Thread):
@@ -52,7 +53,7 @@ class Stepper(threading.Thread):
 
     def connect(self):
         """Set GPIO pins as outputs"""
-        if not self.debug and GPIO:
+        if not self.debug:
             for pin in self.pins:
                 GPIO.setup(pin, GPIO.OUT)
         self.connected = True
@@ -83,17 +84,15 @@ class Stepper(threading.Thread):
         if self.debug:
             self.pins = False
         else:
-            if GPIO:
-                GPIO.setmode(GPIO.BOARD)
+            GPIO.setmode(GPIO.BOARD)
             self.pins = pins
         logger.debug('GPIO pins: %s', self.pins)
         self._step_delay = step_delay
         self._divider = 1.0
 
     def __del__(self):
-        """Clean GPIO settings"""
-        if GPIO:
-            GPIO.cleanup()
+        """Clean GPIO settings on exit"""
+        GPIO.cleanup()
 
     def _set_step(self, step):
         """Set GPIO outputs for certain step
