@@ -103,8 +103,8 @@ class Stepper(threading.Thread):
             #for testing purposes
             if self.pins:
                 for index, pin in enumerate(self.pins):
-                    logger.debug('Step: %s\tDivider: %s', self.step, self.divider)
                     GPIO.output(pin, self._step_outputs[index])
+            logger.debug('Pins: %s\tvalues: %s', self.pins, self._step_outputs)
         else:
             logger.info("Not connected to GPIO pins")
 
@@ -117,7 +117,7 @@ class Stepper(threading.Thread):
     def step_backward(self):
         """Decrement step and set it to GPIO"""
         self.step -= 1.0 / self.divider
-        logger.debug('Step: +%s = %s', 1.0 / self.divider, self.step)
+        logger.debug('Step: -%s = %s', 1.0 / self.divider, self.step)
         self._set_step(int(self.step) % 8)
 
     def step_to(self, destination):
